@@ -1,0 +1,38 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+	<TargetFramework>net6.0</TargetFramework>
+	<ImplicitUsings>enable</ImplicitUsings>
+	<Nullable>enable</Nullable>
+	<AnalysisMode>All</AnalysisMode>
+	<EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+	<Authors>Kevin De Coninck</Authors>
+	<Product>Restify</Product>
+	<PackageProjectUrl>https://github.com/kdeconinck/Restify/tree/main/app/Restify.Core.Application.Abstractions/</PackageProjectUrl>
+	<RepositoryUrl>https://github.com/kdeconinck/Restify.git</RepositoryUrl>
+	<PackageLicenseExpression>MIT</PackageLicenseExpression>
+	<Version>0.0.8</Version>
+  </PropertyGroup>
+
+  <ItemGroup>
+	<FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+	<PackageReference Include="Roslynator.Analyzers" Version="4.1.1">
+	  <PrivateAssets>all</PrivateAssets>
+	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	</PackageReference>
+	<PackageReference Include="SonarAnalyzer.CSharp" Version="8.40.0.48530">
+	  <PrivateAssets>all</PrivateAssets>
+	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	</PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+	<ProjectReference Include="..\Restify.Modules.Middleware.Abstractions\Restify.Modules.Middleware.Abstractions.csproj" />
+	<ProjectReference Include="..\Restify.Modules.Routing.Abstractions\Restify.Modules.Routing.Abstractions.csproj" />
+	<ProjectReference Include="..\Restify.Modules.Services.Abstractions\Restify.Modules.Services.Abstractions.csproj" />
+  </ItemGroup>
+
+</Project>
