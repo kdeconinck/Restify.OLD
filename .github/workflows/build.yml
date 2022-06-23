@@ -1,0 +1,60 @@
+# ======================================================================================================================
+# == LICENSE:       Copyright (c) 2022 Kevin De Coninck
+# ==
+# ==                Permission is hereby granted, free of charge, to any person
+# ==                obtaining a copy of this software and associated documentation
+# ==                files (the "Software"), to deal in the Software without
+# ==                restriction, including without limitation the rights to use,
+# ==                copy, modify, merge, publish, distribute, sublicense, and/or sell
+# ==                copies of the Software, and to permit persons to whom the
+# ==                Software is furnished to do so, subject to the following
+# ==                conditions:
+# ==
+# ==                The above copyright notice and this permission notice shall be
+# ==                included in all copies or substantial portions of the Software.
+# ==
+# ==                THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+# ==                EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+# ==                OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+# ==                NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+# ==                HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+# ==                WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+# ==                FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+# ==                OTHER DEALINGS IN THE SOFTWARE.
+# ======================================================================================================================
+name: Build & test
+
+on: [ push ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        dotnet-version: [ '6.0.301' ]
+
+    steps:
+        # Checkout source.
+      - uses: actions/checkout@v3
+
+        # Setup .NET SDK.
+      - name: Setup dotnet ${{ matrix.dotnet-version }}
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: ${{ matrix.dotnet-version }}
+
+        # Restore NuGet packages.
+      - name: Run `dotnet restore`.
+        working-directory: ./app
+        run: dotnet restore
+
+        # Build the .NET Solution.
+      - name: Run `dotnet build`.
+        working-directory: ./app
+        run: dotnet build
+
+        # Test the .NET Solution.
+      - name: Run `dotnet test`.
+        working-directory: ./app
+        run: dotnet test
