@@ -22,61 +22,71 @@
 // =                FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // =                OTHER DEALINGS IN THE SOFTWARE.
 // =====================================================================================================================
-namespace Restify.Core.Application.Abstractions;
+namespace Restify.Modules.Configuration;
 
 using System.Diagnostics.CodeAnalysis;
 
-using Microsoft.AspNetCore.Builder;
-
-using Restify.Core.Application.Abstractions.Configuration;
 using Restify.Core.Application.Abstractions.Startup;
 using Restify.Modules.Middleware.Abstractions;
+using Restify.Modules.Models.Collections;
 using Restify.Modules.Routing.Abstractions;
 using Restify.Modules.Services.Abstractions;
 
 using static Restify.Modules.Properties.Supressions;
 
-public interface IRestifyApp
+internal sealed class RestifyAppConfiguration
 {
-    ConfigureHostBuilder Host
+    private readonly RestifyAppServiceContainer serviceContainer;
+
+    internal RestifyAppConfiguration(RestifyAppServiceContainer serviceContainer)
+    {
+        this.serviceContainer = serviceContainer;
+        this.ServicesModules = new RegisteredServicesModulesCollection();
+        this.RoutingModules = new RegisteredRoutingModulesCollection();
+        this.MiddlewareModules = new RegisteredMiddlewareModulesCollection();
+    }
+
+    internal IRestifyStartupAction? OnBeforeRunAction
+    {
+        get; set;
+    }
+
+    internal RegisteredServicesModulesCollection ServicesModules
+    {
+        get;
+    }
+
+    internal RegisteredRoutingModulesCollection RoutingModules
+    {
+        get;
+    }
+
+    internal RegisteredMiddlewareModulesCollection MiddlewareModules
     {
         get;
     }
 
     [SuppressMessage(Categories.MinorCodeSmell, Identifiers.S4018, Justification = Justifications.ApiDesign)]
-    IRestifyApp RegisterModule<TServicesModule>()
-        where TServicesModule : class, IServicesModule;
+    internal void RegisterServicesModule<TServicesModule>()
+        where TServicesModule : class, IServicesModule
+    {
+        this.serviceContainer.RegisterSingletonService<TServicesModule>();
+        this.ServicesModules.Register(this.serviceContainer.ResolveService<TServicesModule>());
+    }
 
     [SuppressMessage(Categories.MinorCodeSmell, Identifiers.S4018, Justification = Justifications.ApiDesign)]
-    IRestifyApp RegisterModule<TServicesModule, TRoutingModule>()
-        where TServicesModule : class, IServicesModule
-        where TRoutingModule : class, IRoutingModule;
-
-    [SuppressMessage(Categories.MinorCodeSmell, Identifiers.S4018, Justification = Justifications.ApiDesign)]
-    IRestifyApp RegisterModule<TServicesModule, TRoutingModule, TMiddlewareModule>()
-        where TServicesModule : class, IServicesModule
+    internal void RegisterRoutingModule<TRoutingModule>()
         where TRoutingModule : class, IRoutingModule
-        where TMiddlewareModule : class, IMiddlewareModule;
+    {
+        this.serviceContainer.RegisterSingletonService<TRoutingModule>();
+        this.RoutingModules.Register(this.serviceContainer.ResolveService<TRoutingModule>());
+    }
 
     [SuppressMessage(Categories.MinorCodeSmell, Identifiers.S4018, Justification = Justifications.ApiDesign)]
-    IRestifyApp RegisterServicesModule<TServicesModule>()
-        where TServicesModule : class, IServicesModule;
-
-    [SuppressMessage(Categories.MinorCodeSmell, Identifiers.S4018, Justification = Justifications.ApiDesign)]
-    IRestifyApp RegisterRoutingModule<TRoutingModule>()
-        where TRoutingModule : class, IRoutingModule;
-
-    [SuppressMessage(Categories.MinorCodeSmell, Identifiers.S4018, Justification = Justifications.ApiDesign)]
-    IRestifyApp RegisterMiddlewareModule<TMiddlewareModule>()
-        where TMiddlewareModule : class, IMiddlewareModule;
-
-    [SuppressMessage(Categories.MinorCodeSmell, Identifiers.S4018, Justification = Justifications.ApiDesign)]
-    IRestifyApp UseConfigurationProvider<TConfiguration>()
-        where TConfiguration : class, IRestifyConfigurationProvider;
-
-    [SuppressMessage(Categories.MinorCodeSmell, Identifiers.S4018, Justification = Justifications.ApiDesign)]
-    IRestifyApp OnBeforeStartup<TStartupAction>()
-        where TStartupAction : class, IRestifyStartupAction;
-
-    Task RunAsync();
+    internal void RegisterMiddlewareModule<TMiddlewareModule>()
+        where TMiddlewareModule : class, IMiddlewareModule
+    {
+        this.serviceContainer.RegisterSingletonService<TMiddlewareModule>();
+        this.MiddlewareModules.Register(this.serviceContainer.ResolveService<TMiddlewareModule>());
+    }
 }

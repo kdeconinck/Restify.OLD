@@ -29,7 +29,7 @@ using Microsoft.AspNetCore.Routing;
 using Restify.Modules.Models.Collections.Base;
 using Restify.Modules.Routing.Abstractions;
 
-internal sealed class RegisteredRouteModulesCollection : RegisteredModulesCollection<IRoutingModule>
+internal sealed class RegisteredRoutingModulesCollection : RegisteredModulesCollection<IRoutingModule>
 {
     internal void RegisterRoutes(IEndpointRouteBuilder endpointRouteBuilder)
     {

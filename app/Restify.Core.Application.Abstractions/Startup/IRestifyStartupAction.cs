@@ -24,9 +24,7 @@
 // =====================================================================================================================
 namespace Restify.Core.Application.Abstractions.Startup;
 
-using Microsoft.Extensions.Hosting;
-
 public interface IRestifyStartupAction
 {
-    Task RunAsync(IHost host);
+    Task RunAsync();
 }

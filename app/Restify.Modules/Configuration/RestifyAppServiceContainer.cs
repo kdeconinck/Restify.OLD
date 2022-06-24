@@ -22,11 +22,34 @@
 // =                FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // =                OTHER DEALINGS IN THE SOFTWARE.
 // =====================================================================================================================
-namespace Restify.Core.Application.Abstractions.Configuration;
+namespace Restify.Modules.Configuration;
 
-using Restify.Core.Application.Abstractions;
+using System.Diagnostics.CodeAnalysis;
 
-public interface IRestifyConfigurationProvider
+using Microsoft.Extensions.DependencyInjection;
+
+using static Restify.Modules.Properties.Supressions;
+
+internal sealed class RestifyAppServiceContainer
 {
-    IRestifyApp Apply(IRestifyApp app);
+    private readonly IServiceCollection services;
+
+    internal RestifyAppServiceContainer(IServiceCollection services)
+    {
+        this.services = services;
+    }
+
+    [SuppressMessage(Categories.MinorCodeSmell, Identifiers.S4018, Justification = Justifications.ApiDesign)]
+    internal void RegisterSingletonService<TService>()
+        where TService : class
+    {
+        _ = this.services.AddSingleton<TService>();
+    }
+
+    [SuppressMessage(Categories.MinorCodeSmell, Identifiers.S4018, Justification = Justifications.ApiDesign)]
+    internal TService ResolveService<TService>()
+        where TService : notnull
+    {
+        return this.services.BuildServiceProvider().GetRequiredService<TService>();
+    }
 }

@@ -1,4 +1,4 @@
-﻿// =====================================================================================================================
+// =====================================================================================================================
 // = LICENSE:       Copyright (c) 2022 Kevin De Coninck
 // =
 // =                Permission is hereby granted, free of charge, to any person
@@ -22,11 +22,23 @@
 // =                FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // =                OTHER DEALINGS IN THE SOFTWARE.
 // =====================================================================================================================
-namespace Restify.Core.Application.Abstractions.Configuration;
+using Restify.Configuration.Providers.Azure;
+using Restify.Modules;
+using Restify.Modules.Routing.Abstractions;
 
-using Restify.Core.Application.Abstractions;
+await RestifyAppBuilder.New(args)
+    .RegisterRoutingModule<HelloWorldRoutingModule>()
+    .UseConfigurationProvider<AzureConfigurationProvider>()
+    .RunAsync()
+    .ConfigureAwait(false);
 
-public interface IRestifyConfigurationProvider
+public partial class Program
 {
-    IRestifyApp Apply(IRestifyApp app);
+    public sealed class HelloWorldRoutingModule : IRoutingModule
+    {
+        public void RegisterRoutes(IEndpointRouteBuilder builder)
+        {
+            _ = builder.MapGet("/", () => "Hello, World!");
+        }
+    }
 }

@@ -32,8 +32,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Restify.Core.Application.Abstractions;
 using Restify.Core.Application.Abstractions.Configuration;
 using Restify.Core.Application.Abstractions.Startup;
+using Restify.Modules.Configuration;
 using Restify.Modules.Middleware.Abstractions;
-using Restify.Modules.Models.Collections;
 using Restify.Modules.Routing.Abstractions;
 using Restify.Modules.Services.Abstractions;
 
@@ -41,26 +41,20 @@ using static Restify.Modules.Properties.Supressions;
 
 internal sealed class RestifyApp : IRestifyApp
 {
+    private readonly RestifyAppServiceContainer serviceContainer;
+    private readonly WebApplicationBuilder webApplicationBuilder;
     private readonly IServiceCollection services;
-    private readonly WebApplication webApplication;
-    private readonly RegisteredMiddlewareModulesCollection middlewareModules;
-    private readonly RegisteredRouteModulesCollection routeModules;
-    private readonly RegisteredServicesModulesCollection servicesModules;
+    private readonly RestifyAppConfiguration restifyAppConfiguration;
 
     internal RestifyApp(WebApplicationBuilder webApplicationBuilder)
     {
+        this.serviceContainer = new RestifyAppServiceContainer(webApplicationBuilder.Services);
+        this.restifyAppConfiguration = new RestifyAppConfiguration(this.serviceContainer);
+
+        this.webApplicationBuilder = webApplicationBuilder;
         this.services = webApplicationBuilder.Services;
         this.Host = webApplicationBuilder.Host;
-        this.middlewareModules = new RegisteredMiddlewareModulesCollection();
-        this.routeModules = new RegisteredRouteModulesCollection();
-        this.servicesModules = new RegisteredServicesModulesCollection();
 
-        this.webApplication = webApplicationBuilder.Build();
-    }
-
-    private IRestifyStartupAction? OnBeforeRunAction
-    {
-        get; set;
     }
 
     public ConfigureHostBuilder Host
@@ -70,100 +64,91 @@ internal sealed class RestifyApp : IRestifyApp
 
     [SuppressMessage(Categories.MinorCodeSmell, Identifiers.S4018, Justification = Justifications.ApiDesign)]
     public IRestifyApp RegisterModule<TServicesModule>()
-        where TServicesModule : IServicesModule
+        where TServicesModule : class, IServicesModule
     {
         return this.RegisterServicesModule<TServicesModule>();
     }
 
     [SuppressMessage(Categories.MinorCodeSmell, Identifiers.S4018, Justification = Justifications.ApiDesign)]
-    public IRestifyApp RegisterModule<TServicesModule, TRouteModule>()
-        where TServicesModule : IServicesModule
-        where TRouteModule : IRoutingModule
+    public IRestifyApp RegisterModule<TServicesModule, TRoutingModule>()
+        where TServicesModule : class, IServicesModule
+        where TRoutingModule : class, IRoutingModule
     {
         _ = this.RegisterServicesModule<TServicesModule>();
-        return this.RegisterRoutingModule<TRouteModule>();
+
+        return this.RegisterRoutingModule<TRoutingModule>();
     }
 
     [SuppressMessage(Categories.MinorCodeSmell, Identifiers.S4018, Justification = Justifications.ApiDesign)]
-    public IRestifyApp RegisterModule<TServicesModule, TRouting, TMiddlewareModule>()
-        where TServicesModule : IServicesModule
-        where TRouting : IRoutingModule
-        where TMiddlewareModule : IMiddlewareModule
+    public IRestifyApp RegisterModule<TServicesModule, TRoutingModule, TMiddlewareModule>()
+        where TServicesModule : class, IServicesModule
+        where TRoutingModule : class, IRoutingModule
+        where TMiddlewareModule : class, IMiddlewareModule
     {
         _ = this.RegisterServicesModule<TServicesModule>();
-        _ = this.RegisterRoutingModule<TRouting>();
+        _ = this.RegisterRoutingModule<TRoutingModule>();
 
         return this.RegisterMiddlewareModule<TMiddlewareModule>();
     }
 
     [SuppressMessage(Categories.MinorCodeSmell, Identifiers.S4018, Justification = Justifications.ApiDesign)]
-    public IRestifyApp RegisterServicesModule<TModule>()
-        where TModule : IServicesModule
+    public IRestifyApp RegisterServicesModule<TServicesModule>()
+        where TServicesModule : class, IServicesModule
     {
-        this.servicesModules.Register(this.ResolveService<TModule>());
+        this.restifyAppConfiguration.RegisterServicesModule<TServicesModule>();
 
         return this;
     }
 
     [SuppressMessage(Categories.MinorCodeSmell, Identifiers.S4018, Justification = Justifications.ApiDesign)]
     public IRestifyApp RegisterRoutingModule<TRoutingModule>()
-        where TRoutingModule : IRoutingModule
+        where TRoutingModule : class, IRoutingModule
     {
-        this.routeModules.Register(this.ResolveService<TRoutingModule>());
+        this.restifyAppConfiguration.RegisterRoutingModule<TRoutingModule>();
 
         return this;
     }
 
     [SuppressMessage(Categories.MinorCodeSmell, Identifiers.S4018, Justification = Justifications.ApiDesign)]
     public IRestifyApp RegisterMiddlewareModule<TMiddlewareModule>()
-        where TMiddlewareModule : IMiddlewareModule
+        where TMiddlewareModule : class, IMiddlewareModule
     {
-        this.middlewareModules.Register(this.ResolveService<TMiddlewareModule>());
+        this.restifyAppConfiguration.RegisterMiddlewareModule<TMiddlewareModule>();
 
         return this;
     }
 
     [SuppressMessage(Categories.MinorCodeSmell, Identifiers.S4018, Justification = Justifications.ApiDesign)]
     public IRestifyApp UseConfigurationProvider<TConfiguration>()
-        where TConfiguration : IRestifyConfigurationProvider
+        where TConfiguration : class, IRestifyConfigurationProvider
     {
-        return this.ResolveService<TConfiguration>().Apply(this, this.webApplication.Configuration);
+        this.serviceContainer.RegisterSingletonService<TConfiguration>();
+
+        return this.serviceContainer.ResolveService<TConfiguration>().Apply(this);
     }
 
     [SuppressMessage(Categories.MinorCodeSmell, Identifiers.S4018, Justification = Justifications.ApiDesign)]
     public IRestifyApp OnBeforeStartup<TStartupAction>()
-        where TStartupAction : IRestifyStartupAction
+        where TStartupAction : class, IRestifyStartupAction
     {
-        this.OnBeforeRunAction = this.ResolveService<TStartupAction>();
+        this.serviceContainer.RegisterSingletonService<TStartupAction>();
+        this.restifyAppConfiguration.OnBeforeRunAction = this.serviceContainer.ResolveService<TStartupAction>();
 
         return this;
     }
 
     public async Task RunAsync()
     {
-        this.RegisterModule();
+        WebApplication? webApplication = this.webApplicationBuilder.Build();
+        this.restifyAppConfiguration.ServicesModules.RegisterServices(this.services);
+        this.restifyAppConfiguration.RoutingModules.RegisterRoutes(webApplication);
+        this.restifyAppConfiguration.MiddlewareModules.Use(webApplication);
 
-        if (this.OnBeforeRunAction != null)
+        if (this.restifyAppConfiguration.OnBeforeRunAction != null)
         {
-            await this.OnBeforeRunAction.RunAsync(this.webApplication).ConfigureAwait(false);
+            await this.restifyAppConfiguration.OnBeforeRunAction.RunAsync().ConfigureAwait(false);
         }
 
-        await this.webApplication.RunAsync().ConfigureAwait(false);
-    }
-
-    private void RegisterModule()
-    {
-        this.servicesModules.RegisterServices(this.services);
-        this.routeModules.RegisterRoutes(this.webApplication);
-        this.middlewareModules.Use(this.webApplication);
-    }
-
-    [SuppressMessage(Categories.MinorCodeSmell, Identifiers.S4018, Justification = Justifications.ApiDesign)]
-    private TService ResolveService<TService>()
-        where TService : notnull
-    {
-        using IServiceScope serviceProviderScope = this.webApplication.Services.CreateScope();
-
-        return this.webApplication.Services.GetRequiredService<TService>();
+        await webApplication.RunAsync().ConfigureAwait(false);
     }
 }
