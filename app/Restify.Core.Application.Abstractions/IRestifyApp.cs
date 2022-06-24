@@ -45,34 +45,34 @@ public interface IRestifyApp
 
     [SuppressMessage(Categories.MinorCodeSmell, Identifiers.S4018, Justification = Justifications.ApiDesign)]
     IRestifyApp RegisterModule<TServicesModule>()
-        where TServicesModule : IServicesModule, new();
+        where TServicesModule : IServicesModule;
 
     [SuppressMessage(Categories.MinorCodeSmell, Identifiers.S4018, Justification = Justifications.ApiDesign)]
     IRestifyApp RegisterModule<TServicesModule, TRouteModule>()
-        where TServicesModule : IServicesModule, new()
-        where TRouteModule : IRoutingModule, new();
+        where TServicesModule : IServicesModule
+        where TRouteModule : IRoutingModule;
 
     [SuppressMessage(Categories.MinorCodeSmell, Identifiers.S4018, Justification = Justifications.ApiDesign)]
     IRestifyApp RegisterModule<TServicesModule, TRouteModule, TMiddlewareModule>()
-        where TServicesModule : IServicesModule, new()
-        where TRouteModule : IRoutingModule, new()
-        where TMiddlewareModule : IMiddlewareModule, new();
+        where TServicesModule : IServicesModule
+        where TRouteModule : IRoutingModule
+        where TMiddlewareModule : IMiddlewareModule;
 
     [SuppressMessage(Categories.MinorCodeSmell, Identifiers.S4018, Justification = Justifications.ApiDesign)]
     IRestifyApp RegisterServicesModule<TServicesModule>()
-        where TServicesModule : IServicesModule, new();
+        where TServicesModule : IServicesModule;
 
     [SuppressMessage(Categories.MinorCodeSmell, Identifiers.S4018, Justification = Justifications.ApiDesign)]
     IRestifyApp RegisterRoutingModule<TRouteModule>()
-        where TRouteModule : IRoutingModule, new();
+        where TRouteModule : IRoutingModule;
 
     [SuppressMessage(Categories.MinorCodeSmell, Identifiers.S4018, Justification = Justifications.ApiDesign)]
     IRestifyApp RegisterMiddlewareModule<TMiddlewareModule>()
-        where TMiddlewareModule : IMiddlewareModule, new();
+        where TMiddlewareModule : IMiddlewareModule;
 
     [SuppressMessage(Categories.MinorCodeSmell, Identifiers.S4018, Justification = Justifications.ApiDesign)]
     IRestifyApp UseConfigurationProvider<TConfiguration>()
-        where TConfiguration : IRestifyConfigurationProvider, new();
+        where TConfiguration : IRestifyConfigurationProvider;
 
     [SuppressMessage(Categories.MinorCodeSmell, Identifiers.S4018, Justification = Justifications.ApiDesign)]
     IRestifyApp OnBeforeStartup<TStartupAction>()

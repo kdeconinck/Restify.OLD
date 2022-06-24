@@ -36,7 +36,7 @@ internal class RegisteredModulesCollection<TModule>
     }
 
     internal void Register<TInstance>(TInstance instance)
-        where TInstance : TModule, new()
+        where TInstance : TModule
     {
         this.Modules.Add(instance);
     }
