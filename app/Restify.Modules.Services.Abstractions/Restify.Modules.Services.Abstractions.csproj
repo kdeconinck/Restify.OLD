@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
 	<TargetFramework>net6.0</TargetFramework>
@@ -11,7 +11,7 @@
 	<PackageProjectUrl>https://github.com/kdeconinck/Restify/tree/main/app/Restify.Modules.Services.Abstractions/</PackageProjectUrl>
 	<RepositoryUrl>https://github.com/kdeconinck/Restify.git</RepositoryUrl>
 	<PackageLicenseExpression>MIT</PackageLicenseExpression>
-	<Version>0.0.4</Version>
+	<Version>0.0.5</Version>
   </PropertyGroup>
 
   <ItemGroup>

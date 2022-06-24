@@ -70,15 +70,15 @@ internal sealed class RestifyApp : IRestifyApp
 
     [SuppressMessage(Categories.MinorCodeSmell, Identifiers.S4018, Justification = Justifications.ApiDesign)]
     public IRestifyApp RegisterModule<TServicesModule>()
-        where TServicesModule : IServicesModule, new()
+        where TServicesModule : IServicesModule
     {
         return this.RegisterServicesModule<TServicesModule>();
     }
 
     [SuppressMessage(Categories.MinorCodeSmell, Identifiers.S4018, Justification = Justifications.ApiDesign)]
     public IRestifyApp RegisterModule<TServicesModule, TRouteModule>()
-        where TServicesModule : IServicesModule, new()
-        where TRouteModule : IRoutingModule, new()
+        where TServicesModule : IServicesModule
+        where TRouteModule : IRoutingModule
     {
         _ = this.RegisterServicesModule<TServicesModule>();
         return this.RegisterRoutingModule<TRouteModule>();
@@ -86,9 +86,9 @@ internal sealed class RestifyApp : IRestifyApp
 
     [SuppressMessage(Categories.MinorCodeSmell, Identifiers.S4018, Justification = Justifications.ApiDesign)]
     public IRestifyApp RegisterModule<TServicesModule, TRouting, TMiddlewareModule>()
-        where TServicesModule : IServicesModule, new()
-        where TRouting : IRoutingModule, new()
-        where TMiddlewareModule : IMiddlewareModule, new()
+        where TServicesModule : IServicesModule
+        where TRouting : IRoutingModule
+        where TMiddlewareModule : IMiddlewareModule
     {
         _ = this.RegisterServicesModule<TServicesModule>();
         _ = this.RegisterRoutingModule<TRouting>();
@@ -98,7 +98,7 @@ internal sealed class RestifyApp : IRestifyApp
 
     [SuppressMessage(Categories.MinorCodeSmell, Identifiers.S4018, Justification = Justifications.ApiDesign)]
     public IRestifyApp RegisterServicesModule<TModule>()
-        where TModule : IServicesModule, new()
+        where TModule : IServicesModule
     {
         this.servicesModules.Register(this.ResolveService<TModule>());
 
@@ -107,7 +107,7 @@ internal sealed class RestifyApp : IRestifyApp
 
     [SuppressMessage(Categories.MinorCodeSmell, Identifiers.S4018, Justification = Justifications.ApiDesign)]
     public IRestifyApp RegisterRoutingModule<TRoutingModule>()
-        where TRoutingModule : IRoutingModule, new()
+        where TRoutingModule : IRoutingModule
     {
         this.routeModules.Register(this.ResolveService<TRoutingModule>());
 
@@ -116,7 +116,7 @@ internal sealed class RestifyApp : IRestifyApp
 
     [SuppressMessage(Categories.MinorCodeSmell, Identifiers.S4018, Justification = Justifications.ApiDesign)]
     public IRestifyApp RegisterMiddlewareModule<TMiddlewareModule>()
-        where TMiddlewareModule : IMiddlewareModule, new()
+        where TMiddlewareModule : IMiddlewareModule
     {
         this.middlewareModules.Register(this.ResolveService<TMiddlewareModule>());
 
@@ -125,9 +125,9 @@ internal sealed class RestifyApp : IRestifyApp
 
     [SuppressMessage(Categories.MinorCodeSmell, Identifiers.S4018, Justification = Justifications.ApiDesign)]
     public IRestifyApp UseConfigurationProvider<TConfiguration>()
-        where TConfiguration : IRestifyConfigurationProvider, new()
+        where TConfiguration : IRestifyConfigurationProvider
     {
-        return new TConfiguration().Apply(this, this.webApplication.Configuration);
+        return this.ResolveService<TConfiguration>().Apply(this, this.webApplication.Configuration);
     }
 
     [SuppressMessage(Categories.MinorCodeSmell, Identifiers.S4018, Justification = Justifications.ApiDesign)]
