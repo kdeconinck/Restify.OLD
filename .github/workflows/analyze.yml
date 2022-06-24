@@ -22,38 +22,29 @@
 # ==                FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 # ==                OTHER DEALINGS IN THE SOFTWARE.
 # ======================================================================================================================
-name: Build & test
+name: Analyze (Using JetBrains ReSharper GlobalTools)
 
 on: [ push ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        dotnet-version: [ '6.0.301' ]
-
     steps:
         # Checkout source.
       - uses: actions/checkout@v3
 
-        # Setup .NET SDK.
-      - name: Setup dotnet ${{ matrix.dotnet-version }}
-        uses: actions/setup-dotnet@v2
+        # Install `JetBrains ReSharper GlobalTools`.
+      - name: Install `JetBrains ReSharper GlobalTools`.
+        working-directory: ./app
+        run: dotnet tool restore
+
+        # Run `JetBrains ReSharper GlobalTools (Inspect Code)`.
+      - name: Run `JetBrains ReSharper GlobalTools (Inspect Code)`.
+        working-directory: ./app
+        run: dotnet jb inspectcode ./Restify.sln -f="sarif" -o="CodeIssues.sarif"
+
+        # Upload `JetBrains ReSharper GlobalTools (Inspect Code)` results file.
+      - name: Upload `JetBrains ReSharper GlobalTools (Inspect Code)` file.
+        uses: github/codeql-action/upload-sarif@v2
         with:
-          dotnet-version: ${{ matrix.dotnet-version }}
-
-        # Restore NuGet packages.
-      - name: Run `dotnet restore`.
-        working-directory: ./app
-        run: dotnet restore
-
-        # Build the .NET Solution.
-      - name: Run `dotnet build`.
-        working-directory: ./app
-        run: dotnet build
-
-        # Test the .NET Solution.
-      - name: Run `dotnet test`.
-        working-directory: ./app
-        run: dotnet test
+          sarif_file: ./app/CodeIssues.sarif
