@@ -43,7 +43,6 @@ using static Restify.Modules.Properties.Supressions;
 internal sealed class RestifyApp : IRestifyApp
 {
     private readonly IServiceCollection services;
-    private readonly IConfiguration configuration;
     private readonly WebApplication webApplication;
     private readonly RegisteredMiddlewareModulesCollection middlewareModules;
     private readonly RegisteredRouteModulesCollection routeModules;
@@ -52,7 +51,6 @@ internal sealed class RestifyApp : IRestifyApp
     internal RestifyApp(WebApplicationBuilder webApplicationBuilder)
     {
         this.services = webApplicationBuilder.Services;
-        this.configuration = webApplicationBuilder.Configuration;
         this.Host = webApplicationBuilder.Host;
         this.middlewareModules = new RegisteredMiddlewareModulesCollection();
         this.routeModules = new RegisteredRouteModulesCollection();
@@ -65,8 +63,6 @@ internal sealed class RestifyApp : IRestifyApp
     {
         get; set;
     }
-
-    public IConfiguration Configuration => this.webApplication.Configuration;
 
     public ConfigureHostBuilder Host
     {
@@ -135,9 +131,11 @@ internal sealed class RestifyApp : IRestifyApp
         return new TConfiguration().Apply(this);
     }
 
-    public IRestifyApp OnBeforeRun(IRestifyStartupAction startupAction)
+    [SuppressMessage(Categories.MinorCodeSmell, Identifiers.S4018, Justification = Justifications.ApiDesign)]
+    public IRestifyApp OnBeforeStartup<TStartupAction>()
+        where TStartupAction : IRestifyStartupAction
     {
-        this.OnBeforeRunAction = startupAction;
+        this.OnBeforeRunAction = this.ResolveService<TStartupAction>();
 
         return this;
     }
@@ -156,8 +154,17 @@ internal sealed class RestifyApp : IRestifyApp
 
     private void RegisterModule()
     {
-        this.servicesModules.RegisterServices(this.services, this.configuration);
+        this.servicesModules.RegisterServices(this.services, this.ResolveService<IConfiguration>());
         this.routeModules.RegisterRoutes(this.webApplication);
         this.middlewareModules.Use(this.webApplication);
+    }
+
+    [SuppressMessage(Categories.MinorCodeSmell, Identifiers.S4018, Justification = Justifications.ApiDesign)]
+    private TService ResolveService<TService>()
+        where TService : notnull
+    {
+        using IServiceScope serviceProviderScope = this.webApplication.Services.CreateScope();
+
+        return this.webApplication.Services.GetRequiredService<TService>();
     }
 }

@@ -27,7 +27,6 @@ namespace Restify.Core.Application.Abstractions;
 using System.Diagnostics.CodeAnalysis;
 
 using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.Configuration;
 
 using Restify.Core.Application.Abstractions.Configuration;
 using Restify.Core.Application.Abstractions.Startup;
@@ -39,11 +38,6 @@ using static Restify.Modules.Properties.Supressions;
 
 public interface IRestifyApp
 {
-    IConfiguration Configuration
-    {
-        get;
-    }
-
     ConfigureHostBuilder Host
     {
         get;
@@ -80,7 +74,9 @@ public interface IRestifyApp
     IRestifyApp UseConfigurationProvider<TConfiguration>()
         where TConfiguration : IRestifyConfigurationProvider, new();
 
-    IRestifyApp OnBeforeRun(IRestifyStartupAction startupAction);
+    [SuppressMessage(Categories.MinorCodeSmell, Identifiers.S4018, Justification = Justifications.ApiDesign)]
+    IRestifyApp OnBeforeStartup<TStartupAction>()
+        where TStartupAction : IRestifyStartupAction;
 
     Task RunAsync();
 }
