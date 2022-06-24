@@ -11,7 +11,7 @@
 	<PackageProjectUrl>https://github.com/kdeconinck/Restify/tree/main/app/Restify.Modules.Middleware.Abstractions/</PackageProjectUrl>
 	<RepositoryUrl>https://github.com/kdeconinck/Restify.git</RepositoryUrl>
 	<PackageLicenseExpression>MIT</PackageLicenseExpression>
-	<Version>0.0.7</Version>
+	<Version>0.0.8</Version>
   </PropertyGroup>
 
   <ItemGroup>
