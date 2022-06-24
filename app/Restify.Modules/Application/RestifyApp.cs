@@ -54,10 +54,11 @@ internal sealed class RestifyApp : IRestifyApp
         this.services = webApplicationBuilder.Services;
         this.configuration = webApplicationBuilder.Configuration;
         this.Host = webApplicationBuilder.Host;
-        this.webApplication = webApplicationBuilder.Build();
         this.middlewareModules = new RegisteredMiddlewareModulesCollection();
         this.routeModules = new RegisteredRouteModulesCollection();
         this.servicesModules = new RegisteredServicesModulesCollection();
+
+        this.webApplication = webApplicationBuilder.Build();
     }
 
     private IRestifyStartupAction? OnBeforeRunAction
