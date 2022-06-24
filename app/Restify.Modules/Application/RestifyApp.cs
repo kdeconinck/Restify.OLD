@@ -128,7 +128,7 @@ internal sealed class RestifyApp : IRestifyApp
     public IRestifyApp UseConfigurationProvider<TConfiguration>()
         where TConfiguration : IRestifyConfigurationProvider, new()
     {
-        return new TConfiguration().Apply(this);
+        return new TConfiguration().Apply(this, this.webApplication.Configuration);
     }
 
     [SuppressMessage(Categories.MinorCodeSmell, Identifiers.S4018, Justification = Justifications.ApiDesign)]
