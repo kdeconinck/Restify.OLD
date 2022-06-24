@@ -11,7 +11,7 @@
 	<PackageProjectUrl>https://github.com/kdeconinck/Restify/tree/main/app/Restify.Modules.Routing.Abstractions/</PackageProjectUrl>
 	<RepositoryUrl>https://github.com/kdeconinck/Restify.git</RepositoryUrl>
 	<PackageLicenseExpression>MIT</PackageLicenseExpression>
-	<Version>0.0.1</Version>
+	<Version>0.0.2</Version>
   </PropertyGroup>
 
   <ItemGroup>

@@ -22,7 +22,8 @@
 // =                FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // =                OTHER DEALINGS IN THE SOFTWARE.
 // =====================================================================================================================
-namespace Restify.Configuration.Providers.Abstractions;
+
+namespace Restify.Core.Application.Abstractions.Configuration;
 
 using Restify.Core.Application.Abstractions;
 

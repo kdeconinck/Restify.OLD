@@ -30,8 +30,8 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-using Restify.Configuration.Providers.Abstractions;
 using Restify.Core.Application.Abstractions;
+using Restify.Core.Application.Abstractions.Configuration;
 using Restify.Core.Application.Abstractions.Startup;
 using Restify.Modules.Abstractions;
 using Restify.Modules.Middleware.Abstractions;
@@ -128,10 +128,10 @@ internal sealed class RestifyApp : IRestifyApp
     }
 
     [SuppressMessage(Categories.MinorCodeSmell, Identifiers.S4018, Justification = Justifications.ApiDesign)]
-    public IRestifyApp UseConfigurationProvider<TConfiguration>(IRestifyApp app)
+    public IRestifyApp UseConfigurationProvider<TConfiguration>()
         where TConfiguration : IRestifyConfigurationProvider, new()
     {
-        return new TConfiguration().Apply(app);
+        return new TConfiguration().Apply(this);
     }
 
     public IRestifyApp OnBeforeRun(IRestifyStartupAction startupAction)

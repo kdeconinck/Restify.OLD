@@ -11,7 +11,7 @@
 	<PackageProjectUrl>https://github.com/kdeconinck/Restify/tree/main/app/Restify.Configuration.Providers.Azure/</PackageProjectUrl>
 	<RepositoryUrl>https://github.com/kdeconinck/Restify.git</RepositoryUrl>
 	<PackageLicenseExpression>MIT</PackageLicenseExpression>
-	<Version>0.0.1</Version>
+	<Version>0.0.2</Version>
   </PropertyGroup>
 
   <ItemGroup>
@@ -32,6 +32,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Restify.Core.Application.Abstractions\Restify.Core.Application.Abstractions.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Extensions\" />
   </ItemGroup>
 
 </Project>
