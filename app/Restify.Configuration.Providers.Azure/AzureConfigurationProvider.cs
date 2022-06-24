@@ -26,8 +26,8 @@ namespace Restify.Configuration.Providers.Azure;
 
 using Microsoft.Extensions.Configuration;
 
-using Restify.Configuration.Providers.Abstractions;
 using Restify.Core.Application.Abstractions;
+using Restify.Core.Application.Abstractions.Configuration;
 
 public sealed class AzureConfigurationProvider : IRestifyConfigurationProvider
 {

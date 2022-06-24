@@ -29,7 +29,7 @@ using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 
-using Restify.Configuration.Providers.Abstractions;
+using Restify.Core.Application.Abstractions.Configuration;
 using Restify.Core.Application.Abstractions.Startup;
 using Restify.Modules.Abstractions;
 using Restify.Modules.Middleware.Abstractions;
@@ -77,7 +77,7 @@ public interface IRestifyApp
         where TMiddlewareModule : IMiddlewareModule, new();
 
     [SuppressMessage(Categories.MinorCodeSmell, Identifiers.S4018, Justification = Justifications.ApiDesign)]
-    IRestifyApp UseConfigurationProvider<TConfiguration>(IRestifyApp app)
+    IRestifyApp UseConfigurationProvider<TConfiguration>()
         where TConfiguration : IRestifyConfigurationProvider, new();
 
     IRestifyApp OnBeforeRun(IRestifyStartupAction startupAction);

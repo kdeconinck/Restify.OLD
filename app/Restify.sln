@@ -38,6 +38,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "800. SOURCE.", "800. SOURCE
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "100. ABSTRACTIONS.", "100. ABSTRACTIONS.", "{02EEBA44-6109-4A86-8381-0C670764345A}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "100. GITHUB ACTIONS.", "100. GITHUB ACTIONS.", "{6910D236-70FD-4BB5-91C3-90B7595055E2}"
+	ProjectSection(SolutionItems) = preProject
+		..\.github\workflows\build.yml = ..\.github\workflows\build.yml
+		..\.github\workflows\package.yml = ..\.github\workflows\package.yml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
