@@ -94,7 +94,7 @@ internal sealed class RestifyApp : IRestifyApp
     public IRestifyApp RegisterServicesModule<TServicesModule>()
         where TServicesModule : class, IServicesModule
     {
-        this.restifyAppConfiguration.RegisterServicesModule<TServicesModule>();
+        this.restifyAppConfiguration.RegisterServicesModule<TServicesModule>(this.services);
         this.restifyAppConfiguration.ServicesModules.RegisterServices(this.services);
 
         return this;

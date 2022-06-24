@@ -26,6 +26,8 @@ namespace Restify.Modules.Configuration;
 
 using System.Diagnostics.CodeAnalysis;
 
+using Microsoft.Extensions.DependencyInjection;
+
 using Restify.Modules.Middleware.Abstractions;
 using Restify.Modules.Models.Collections;
 using Restify.Modules.Routing.Abstractions;
@@ -61,11 +63,11 @@ internal sealed class RestifyAppConfiguration
     }
 
     [SuppressMessage(Categories.MinorCodeSmell, Identifiers.S4018, Justification = Justifications.ApiDesign)]
-    internal void RegisterServicesModule<TServicesModule>()
+    internal void RegisterServicesModule<TServicesModule>(IServiceCollection serviceCollection)
         where TServicesModule : class, IServicesModule
     {
         this.serviceContainer.RegisterSingletonService<TServicesModule>();
-        this.ServicesModules.Register(this.serviceContainer.ResolveService<TServicesModule>());
+        this.serviceContainer.ResolveService<TServicesModule>().RegisterServices(serviceCollection);
     }
 
     [SuppressMessage(Categories.MinorCodeSmell, Identifiers.S4018, Justification = Justifications.ApiDesign)]
