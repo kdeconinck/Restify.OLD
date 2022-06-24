@@ -1,0 +1,102 @@
+# ======================================================================================================================
+# == LICENSE:       Copyright (c) 2022 Kevin De Coninck
+# ==
+# ==                Permission is hereby granted, free of charge, to any person
+# ==                obtaining a copy of this software and associated documentation
+# ==                files (the "Software"), to deal in the Software without
+# ==                restriction, including without limitation the rights to use,
+# ==                copy, modify, merge, publish, distribute, sublicense, and/or sell
+# ==                copies of the Software, and to permit persons to whom the
+# ==                Software is furnished to do so, subject to the following
+# ==                conditions:
+# ==
+# ==                The above copyright notice and this permission notice shall be
+# ==                included in all copies or substantial portions of the Software.
+# ==
+# ==                THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+# ==                EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+# ==                OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+# ==                NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+# ==                HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+# ==                WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+# ==                FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+# ==                OTHER DEALINGS IN THE SOFTWARE.
+# ======================================================================================================================
+# Package the different libraries.
+name: Package
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  public:
+    runs-on: ubuntu-latest
+    steps:
+        # Checkout source.
+      - uses: actions/checkout@v3
+
+        # Package `Restify.Core.Application.Abstractions`.
+      - name: Pack `Restify.Core.Application.Abstractions`
+        working-directory: ./app/Restify.Core.Application.Abstractions
+        run: dotnet pack Restify.Core.Application.Abstractions.csproj -c Release
+      
+      # Package `Restify.Configuration.Providers.Azure`.
+      - name: Pack `Restify.Configuration.Providers.Azure`
+        working-directory: ./app/Restify.Configuration.Providers.Azure
+        run: dotnet pack Restify.Configuration.Providers.Azure.csproj -c Release
+
+        # Package `Restify.Modules`.
+      - name: Pack `Restify.Modules`
+        working-directory: ./app/Restify.Modules
+        run: dotnet pack Restify.Modules.csproj -c Release
+
+        # Package `Restify.Modules.Middleware.Abstractions`.
+      - name: Pack `Restify.Modules.Middleware.Abstractions`
+        working-directory: ./app/Restify.Modules.Middleware.Abstractions
+        run: dotnet pack Restify.Modules.Middleware.Abstractions.csproj -c Release
+
+        # Package `Restify.Modules.Routing.Abstractions`.
+      - name: Pack `Restify.Modules.Routing.Abstractions`
+        working-directory: ./app/Restify.Modules.Routing.Abstractions
+        run: dotnet pack Restify.Modules.Routing.Abstractions.csproj -c Release
+
+        # Package `Restify.Modules.Services.Abstractions`.
+      - name: Pack `Restify.Modules.Services.Abstractions`
+        working-directory: ./app/Restify.Modules.Services.Abstractions
+        run: dotnet pack Restify.Modules.Services.Abstractions.csproj -c Release
+
+        # Add NuGet source.
+      - name: Add NuGet source
+        run: dotnet nuget add source --username kdeconinck --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/kdeconinck/index.json"
+
+        # Publish `Restify.Core.Application.Abstractions`.
+      - name: Publish `Restify.Core.Application.Abstractions`
+        working-directory: ./app/Restify.Core.Application.Abstractions/bin/Release
+        run: dotnet nuget push *.nupkg --api-key ${{ secrets.GITHUB_TOKEN }}  --source "github" --skip-duplicate
+      
+        # Publish `Restify.Core.Application.Abstractions`.
+      - name: Publish `Restify.Configuration.Providers.Azure`
+        working-directory: ./app/Restify.Configuration.Providers.Azure/bin/Release
+        run: dotnet nuget push *.nupkg --api-key ${{ secrets.GITHUB_TOKEN }}  --source "github" --skip-duplicate
+
+        # Publish `Restify.Modules`.
+      - name: Publish `Restify.Modules`
+        working-directory: ./app/Restify.Modules/bin/Release
+        run: dotnet nuget push *.nupkg --api-key ${{ secrets.GITHUB_TOKEN }}  --source "github" --skip-duplicate
+
+        # Publish `Restify.Modules.Middleware.Abstractions`.
+      - name: Publish `Restify.Modules.Middleware.Abstractions`
+        working-directory: ./app/Restify.Modules.Middleware.Abstractions/bin/Release
+        run: dotnet nuget push *.nupkg --api-key ${{ secrets.GITHUB_TOKEN }}  --source "github" --skip-duplicate
+
+        # Publish `Restify.Modules.Routing.Abstractions`.
+      - name: Publish `Restify.Modules.Routing.Abstractions`
+        working-directory: ./app/Restify.Modules.Routing.Abstractions/bin/Release
+        run: dotnet nuget push *.nupkg --api-key ${{ secrets.GITHUB_TOKEN }}  --source "github" --skip-duplicate
+
+        # Publish `Restify.Modules.Services.Abstractions`.
+      - name: Publish `Restify.Modules.Services.Abstractions`
+        working-directory: ./app/Restify.Modules.Services.Abstractions/bin/Release
+        run: dotnet nuget push *.nupkg --api-key ${{ secrets.GITHUB_TOKEN }}  --source "github" --skip-duplicate
