@@ -31,11 +31,18 @@ using Restify.Core.Application.Abstractions.Configuration;
 
 public sealed class AzureConfigurationProvider : IRestifyConfigurationProvider
 {
-    public IRestifyApp Apply(IRestifyApp app, IConfiguration configuration)
+    private readonly IConfiguration configuration;
+
+    public AzureConfigurationProvider(IConfiguration configuration)
+    {
+        this.configuration = configuration;
+    }
+
+    public IRestifyApp Apply(IRestifyApp app)
     {
         _ = app ?? throw new ArgumentNullException(nameof(app));
 
-        var connectionString = configuration.GetConnectionString("AppConfig");
+        var connectionString = this.configuration.GetConnectionString("AppConfig");
 
         if (string.IsNullOrEmpty(connectionString))
         {
