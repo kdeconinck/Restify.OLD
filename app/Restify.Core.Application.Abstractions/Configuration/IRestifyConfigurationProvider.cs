@@ -25,9 +25,11 @@
 
 namespace Restify.Core.Application.Abstractions.Configuration;
 
+using Microsoft.Extensions.Configuration;
+
 using Restify.Core.Application.Abstractions;
 
 public interface IRestifyConfigurationProvider
 {
-    IRestifyApp Apply(IRestifyApp app);
+    IRestifyApp Apply(IRestifyApp app, IConfiguration configuration);
 }
