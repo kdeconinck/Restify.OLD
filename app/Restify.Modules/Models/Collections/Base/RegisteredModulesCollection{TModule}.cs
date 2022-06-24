@@ -23,11 +23,6 @@
 // =                OTHER DEALINGS IN THE SOFTWARE.
 // =====================================================================================================================
 namespace Restify.Modules.Models.Collections.Base;
-
-using System.Diagnostics.CodeAnalysis;
-
-using static Restify.Modules.Properties.Supressions;
-
 internal class RegisteredModulesCollection<TModule>
 {
     protected RegisteredModulesCollection()
@@ -40,10 +35,9 @@ internal class RegisteredModulesCollection<TModule>
         get;
     }
 
-    [SuppressMessage(Categories.MinorCodeSmell, Identifiers.S4018, Justification = Justifications.ApiDesign)]
-    internal void Register<TInstance>()
+    internal void Register<TInstance>(TInstance instance)
         where TInstance : TModule, new()
     {
-        this.Modules.Add(new TInstance());
+        this.Modules.Add(instance);
     }
 }

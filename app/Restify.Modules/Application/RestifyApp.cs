@@ -27,16 +27,15 @@ namespace Restify.Modules.Application;
 using System.Diagnostics.CodeAnalysis;
 
 using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 using Restify.Core.Application.Abstractions;
 using Restify.Core.Application.Abstractions.Configuration;
 using Restify.Core.Application.Abstractions.Startup;
-using Restify.Modules.Abstractions;
 using Restify.Modules.Middleware.Abstractions;
 using Restify.Modules.Models.Collections;
 using Restify.Modules.Routing.Abstractions;
+using Restify.Modules.Services.Abstractions;
 
 using static Restify.Modules.Properties.Supressions;
 
@@ -101,7 +100,7 @@ internal sealed class RestifyApp : IRestifyApp
     public IRestifyApp RegisterServicesModule<TModule>()
         where TModule : IServicesModule, new()
     {
-        this.servicesModules.Register<TModule>();
+        this.servicesModules.Register(this.ResolveService<TModule>());
 
         return this;
     }
@@ -110,7 +109,7 @@ internal sealed class RestifyApp : IRestifyApp
     public IRestifyApp RegisterRoutingModule<TRoutingModule>()
         where TRoutingModule : IRoutingModule, new()
     {
-        this.routeModules.Register<TRoutingModule>();
+        this.routeModules.Register(this.ResolveService<TRoutingModule>());
 
         return this;
     }
@@ -119,7 +118,7 @@ internal sealed class RestifyApp : IRestifyApp
     public IRestifyApp RegisterMiddlewareModule<TMiddlewareModule>()
         where TMiddlewareModule : IMiddlewareModule, new()
     {
-        this.middlewareModules.Register<TMiddlewareModule>();
+        this.middlewareModules.Register(this.ResolveService<TMiddlewareModule>());
 
         return this;
     }
@@ -154,7 +153,7 @@ internal sealed class RestifyApp : IRestifyApp
 
     private void RegisterModule()
     {
-        this.servicesModules.RegisterServices(this.services, this.ResolveService<IConfiguration>());
+        this.servicesModules.RegisterServices(this.services);
         this.routeModules.RegisterRoutes(this.webApplication);
         this.middlewareModules.Use(this.webApplication);
     }
