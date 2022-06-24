@@ -24,19 +24,18 @@
 // =====================================================================================================================
 namespace Restify.Modules.Models.Collections;
 
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-using Restify.Modules.Abstractions;
 using Restify.Modules.Models.Collections.Base;
+using Restify.Modules.Services.Abstractions;
 
 internal sealed class RegisteredServicesModulesCollection : RegisteredModulesCollection<IServicesModule>
 {
-    internal void RegisterServices(IServiceCollection services, IConfiguration configuration)
+    internal void RegisterServices(IServiceCollection services)
     {
         foreach (IServicesModule module in this.Modules)
         {
-            module?.RegisterServices(services, configuration);
+            module?.RegisterServices(services);
         }
     }
 }

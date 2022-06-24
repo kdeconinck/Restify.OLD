@@ -22,12 +22,11 @@
 // =                FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // =                OTHER DEALINGS IN THE SOFTWARE.
 // =====================================================================================================================
-namespace Restify.Modules.Abstractions;
+namespace Restify.Modules.Services.Abstractions;
 
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 public interface IServicesModule
 {
-    void RegisterServices(IServiceCollection services, IConfiguration configuration);
+    void RegisterServices(IServiceCollection services);
 }

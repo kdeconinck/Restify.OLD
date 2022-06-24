@@ -30,9 +30,9 @@ using Microsoft.AspNetCore.Builder;
 
 using Restify.Core.Application.Abstractions.Configuration;
 using Restify.Core.Application.Abstractions.Startup;
-using Restify.Modules.Abstractions;
 using Restify.Modules.Middleware.Abstractions;
 using Restify.Modules.Routing.Abstractions;
+using Restify.Modules.Services.Abstractions;
 
 using static Restify.Modules.Properties.Supressions;
 
