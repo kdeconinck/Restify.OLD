@@ -23,6 +23,7 @@
 // =                OTHER DEALINGS IN THE SOFTWARE.
 // =====================================================================================================================
 namespace Restify.Modules.Models.Collections.Base;
+
 internal class RegisteredModulesCollection<TModule>
 {
     protected RegisteredModulesCollection()

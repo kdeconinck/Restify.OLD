@@ -54,7 +54,6 @@ internal sealed class RestifyApp : IRestifyApp
         this.webApplicationBuilder = webApplicationBuilder;
         this.services = webApplicationBuilder.Services;
         this.Host = webApplicationBuilder.Host;
-
     }
 
     public ConfigureHostBuilder Host
@@ -96,6 +95,7 @@ internal sealed class RestifyApp : IRestifyApp
         where TServicesModule : class, IServicesModule
     {
         this.restifyAppConfiguration.RegisterServicesModule<TServicesModule>();
+        this.restifyAppConfiguration.ServicesModules.RegisterServices(this.services);
 
         return this;
     }
@@ -131,24 +131,31 @@ internal sealed class RestifyApp : IRestifyApp
     public IRestifyApp OnBeforeStartup<TStartupAction>()
         where TStartupAction : class, IRestifyStartupAction
     {
-        this.serviceContainer.RegisterSingletonService<TStartupAction>();
-        this.restifyAppConfiguration.OnBeforeRunAction = this.serviceContainer.ResolveService<TStartupAction>();
+        this.serviceContainer.RegisterScopedService<IRestifyStartupAction, TStartupAction>();
 
         return this;
     }
 
     public async Task RunAsync()
     {
-        WebApplication? webApplication = this.webApplicationBuilder.Build();
-        this.restifyAppConfiguration.ServicesModules.RegisterServices(this.services);
+        WebApplication webApplication = this.webApplicationBuilder.Build();
+
         this.restifyAppConfiguration.RoutingModules.RegisterRoutes(webApplication);
         this.restifyAppConfiguration.MiddlewareModules.Use(webApplication);
 
-        if (this.restifyAppConfiguration.OnBeforeRunAction != null)
+        await this.ExecuteOnBeforeActionAsync().ConfigureAwait(false);
+        await webApplication.RunAsync().ConfigureAwait(false);
+    }
+
+    private async Task ExecuteOnBeforeActionAsync()
+    {
+        IRestifyStartupAction? onBeforeRunAction = this.serviceContainer.ResolveService<IRestifyStartupAction>();
+
+        if (onBeforeRunAction == null)
         {
-            await this.restifyAppConfiguration.OnBeforeRunAction.RunAsync().ConfigureAwait(false);
+            return;
         }
 
-        await webApplication.RunAsync().ConfigureAwait(false);
+        await onBeforeRunAction.RunAsync().ConfigureAwait(false);
     }
 }

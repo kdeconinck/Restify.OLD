@@ -26,7 +26,6 @@ namespace Restify.Modules.Configuration;
 
 using System.Diagnostics.CodeAnalysis;
 
-using Restify.Core.Application.Abstractions.Startup;
 using Restify.Modules.Middleware.Abstractions;
 using Restify.Modules.Models.Collections;
 using Restify.Modules.Routing.Abstractions;
@@ -44,11 +43,6 @@ internal sealed class RestifyAppConfiguration
         this.ServicesModules = new RegisteredServicesModulesCollection();
         this.RoutingModules = new RegisteredRoutingModulesCollection();
         this.MiddlewareModules = new RegisteredMiddlewareModulesCollection();
-    }
-
-    internal IRestifyStartupAction? OnBeforeRunAction
-    {
-        get; set;
     }
 
     internal RegisteredServicesModulesCollection ServicesModules

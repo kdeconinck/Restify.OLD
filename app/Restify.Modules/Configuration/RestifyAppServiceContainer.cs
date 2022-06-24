@@ -47,6 +47,14 @@ internal sealed class RestifyAppServiceContainer
     }
 
     [SuppressMessage(Categories.MinorCodeSmell, Identifiers.S4018, Justification = Justifications.ApiDesign)]
+    internal void RegisterScopedService<TService, TImplementation>()
+        where TService : class
+        where TImplementation : class, TService
+    {
+        _ = this.services.AddScoped<TService, TImplementation>();
+    }
+
+    [SuppressMessage(Categories.MinorCodeSmell, Identifiers.S4018, Justification = Justifications.ApiDesign)]
     internal TService ResolveService<TService>()
         where TService : notnull
     {
